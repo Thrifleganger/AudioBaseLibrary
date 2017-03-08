@@ -28,19 +28,21 @@ AudioBase::AudioBase(const char* dest, unsigned int nchnls,
 	mode = 0;
 	count = 0;
 	frameCount = 0;
+	errorCode = 0;
+	textFile = NULL;
 
 	if (strcmp(destination, "dac") == 0) {
 
 		//Fill later
 	} else if (strcmp(destination, "stdout") == 0) {
 		mode = AUDIO_STDOUT;
+		textFile = fopen("dump.txt", "w");
 	} else {
 		SF_INFO info;
 		info.samplerate = AudioParams::getSrate();
 		info.channels = AudioParams::getNchannels();
 		info.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
 		buffer = new double[AudioParams::getBufferSize() * AudioParams::getNchannels()];
-		vector = new double[AudioParams::getVectorSize() * AudioParams::getNchannels()];
 		SNDFILE *openFile = sf_open(destination ,SFM_WRITE, &info);
 		if(openFile != NULL) {
 			handle = (void *) openFile;
@@ -49,13 +51,14 @@ AudioBase::AudioBase(const char* dest, unsigned int nchnls,
 	}
 }
 
-int AudioBase::write(double *signal){
+int AudioBase::write(const double *signal){
 	unsigned int vsamples = AudioParams::vectorSize * AudioParams::nchannels;
 
 	if (mode == AUDIO_REALTIME && handle != NULL) {
 		//Fill later
 	} else if (mode == AUDIO_STDOUT) {
 		for(unsigned int i = 0; i < vsamples; i++){
+			fprintf(textFile, "%f\n", signal[i]);
 			count++;
 		}
 		frameCount += count / nchannels;
@@ -77,8 +80,10 @@ int AudioBase::write(double *signal){
 AudioBase::~AudioBase(){
   if(mode == AUDIO_REALTIME && handle != NULL) {
 	  //Fill later
-  }
-  else if (mode == AUDIO_SNDFILE && handle != NULL){
+  } else if(mode == AUDIO_STDOUT) {
+	  if(textFile)
+		  fclose(textFile);
+  } else if (mode == AUDIO_SNDFILE && handle != NULL){
 	  if (count != 0) {
 		  sf_writef_double((SNDFILE*) handle, buffer, count);
 		  count = 0;

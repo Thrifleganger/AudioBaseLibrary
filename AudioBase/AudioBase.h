@@ -9,6 +9,7 @@
 #include <cmath>
 #include <cstring>
 #include <iostream>
+#include <vector>
 
 
 //Default variable:
@@ -59,15 +60,262 @@ public:
 	}
 };
 
-class AudioBase : public AudioParams {
+class AudioBuffer : public AudioParams {
+protected:
+	std::vector<double> vector;
+public:
+	AudioBuffer() : vector(AudioParams::vectorSize * AudioParams::nchannels, 0.0) {}
+
+	virtual ~AudioBuffer(){
+		vector.clear();
+	}
+
+// + Operator overload
+
+	virtual const AudioBuffer operator+(const double scalar) const {
+		AudioBuffer temp;
+		for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+			temp.vector[i] = vector[i] + scalar;
+		return temp;
+	}
+
+	virtual const AudioBuffer operator+(const double *array) {
+		AudioBuffer temp;
+		for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+			temp.vector[i] = vector[i] + array[i];
+		return temp;
+	}
+
+	virtual const AudioBuffer operator+(const std::vector<double> vect) {
+		AudioBuffer temp;
+		if(this->vectorSize == vect.size()) {
+			for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+				temp.vector[i] = vector[i] + vect[i];
+		}
+		return temp;
+	}
+
+	virtual const AudioBuffer operator+(const AudioBuffer &obj) {
+		return *this + obj.vector;
+	}
+
+// += Operator Overload
+
+	virtual const AudioBuffer &operator+=(const double scalar) {
+		for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+			vector[i] += scalar;
+		return *this;
+	}
+
+	virtual const AudioBuffer &operator+=(const double *array) {
+		for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+			vector[i] += array[i];
+		return *this;
+	}
+
+	virtual const AudioBuffer &operator+=(const std::vector<double> vect) {
+		if(this->vectorSize == vect.size()) {
+			for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+				vector[i] += vect[i];
+		}
+		return *this;
+	}
+
+	virtual const AudioBuffer operator+=(const AudioBuffer &obj) {
+		return *this += obj.vector;
+	}
+
+// - Operator overload
+
+	virtual const AudioBuffer operator-(const double scalar) const {
+		AudioBuffer temp;
+		for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+			temp.vector[i] = vector[i] - scalar;
+		return temp;
+	}
+
+	virtual const AudioBuffer operator-(const double *array) {
+		AudioBuffer temp;
+		for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+			temp.vector[i] = vector[i] - array[i];
+		return temp;
+	}
+
+	virtual const AudioBuffer operator-(const std::vector<double> vect) {
+		AudioBuffer temp;
+		if(this->vectorSize == vect.size()) {
+			for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+				temp.vector[i] = vector[i] - vect[i];
+		}
+		return temp;
+	}
+
+	virtual const AudioBuffer operator-(const AudioBuffer &obj) {
+		return *this - obj.vector;
+	}
+
+// -= Operator Overload
+
+	virtual const AudioBuffer &operator-=(const double scalar) {
+		for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+			vector[i] -= scalar;
+		return *this;
+	}
+
+	virtual const AudioBuffer &operator-=(const double *array) {
+		for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+			vector[i] -= array[i];
+		return *this;
+	}
+
+	virtual const AudioBuffer &operator-=(const std::vector<double> vect) {
+		if(this->vectorSize == vect.size()) {
+			for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+				vector[i] -= vect[i];
+		}
+		return *this;
+	}
+
+	virtual const AudioBuffer operator-=(const AudioBuffer &obj) {
+		return *this -= obj.vector;
+	}
+
+// * Operator Overload
+
+	virtual const AudioBuffer operator*(const double scalar) const {
+		AudioBuffer temp;
+		for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+			temp.vector[i] = vector[i] * scalar;
+		return temp;
+	}
+
+	virtual const AudioBuffer operator*(const double *array) {
+		AudioBuffer temp;
+		for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+			temp.vector[i] = vector[i] * array[i];
+		return temp;
+	}
+
+	virtual const AudioBuffer operator*(const std::vector<double> vect) {
+		AudioBuffer temp;
+		if(this->vectorSize == vect.size()) {
+			for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+				temp.vector[i] = vector[i] * vect[i];
+		}
+		return temp;
+	}
+
+	virtual const AudioBuffer operator*(const AudioBuffer &obj) {
+		return *this * obj.vector;
+	}
+
+// *= Operator Overload
+
+	virtual const AudioBuffer &operator*=(double scalar) {
+		for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+			vector[i] *= scalar;
+		return *this;
+	}
+
+	virtual const AudioBuffer &operator*=(const double *array) {
+		for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+			vector[i] *= array[i];
+		return *this;
+	}
+
+	virtual const AudioBuffer &operator*=(const std::vector<double> vect) {
+		if(this->vectorSize == vect.size()) {
+			for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+				vector[i] *= vect[i];
+		}
+		return *this;
+	}
+
+	virtual const AudioBuffer &operator*=(const AudioBuffer &obj) {
+		return *this *= obj.vector;
+	}
+
+// / Operator Overload
+
+	virtual const AudioBuffer operator/(double scalar) const {
+		AudioBuffer temp;
+		if(scalar != 0) {
+			for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+				temp.vector[i] = vector[i] / scalar;
+		} else {}
+			//****************************************Handle error
+		return temp;
+	}
+
+	virtual const AudioBuffer operator/(const double *array) {
+		AudioBuffer temp;
+		for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+			if(array[i] != 0)
+				temp.vector[i] = vector[i] / array[i];
+		return temp;
+	}
+
+	virtual const AudioBuffer operator/(const std::vector<double> vect) {
+		AudioBuffer temp;
+		if(this->vectorSize == vect.size()) {
+			for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+				if(vect[i] != 0)
+					temp.vector[i] = vector[i] / vect[i];
+		}
+		return temp;
+	}
+
+	virtual const AudioBuffer operator/(const AudioBuffer &obj) {
+		return *this / obj.vector;
+	}
+
+// /= Operator Overload
+
+	virtual const AudioBuffer &operator/=(double scalar) {
+		if(scalar != 0) {
+			for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+				vector[i] /= scalar;
+		}
+		return *this;
+	}
+
+	virtual const AudioBuffer &operator/=(const double *array) {
+		for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+			if(array[i] != 0)
+				vector[i] /= array[i];
+		return *this;
+	}
+
+	virtual const AudioBuffer &operator/=(const std::vector<double> vect) {
+		if(this->vectorSize == vect.size()) {
+			for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
+				if(vect[i] != 0)
+					vector[i] /= vect[i];
+		}
+		return *this;
+	}
+
+	virtual const AudioBuffer &operator/=(const AudioBuffer &obj) {
+		return *this /= obj.vector;
+	}
+
+	const double *getVector() const { return &vector[0]; }
+
+};
+
+
+class AudioBase : public AudioBuffer {
 private:
 	const char* destination;
 	unsigned int mode;
 	unsigned int count;
 	int frameCount;
-	double *vector;
 	double *buffer;
 	void *handle;
+	FILE *textFile;
+
+protected:
+	int errorCode;
 
 public:
 
@@ -79,32 +327,14 @@ public:
 
 	~AudioBase();
 
-	int write(double* signal);
+	int write(const double* signal);
+
+	int write(const AudioBuffer& buffer) { return write(buffer.getVector()); }
 
 	void printCurrentState();
 
 	//Getter and setters:
 };
-
-class AudioBuffer : public AudioParams {
-	double *buffer;
-public:
-	AudioBuffer(){
-		buffer = new double[getVectorSize()];
-	}
-
-	~AudioBuffer(){
-		delete[] buffer;
-	}
-};
-
-/*double* operator*(double* array1, double* array2){
-	double *tempArray = new double[64];
-	for(int i = 0; i < 64; i++) {
-		tempArray[i] = array1[i] * array2[i];
-	}
-	return tempArray;
-}*/
 
 
 #endif /* AUDIOBASE_H_ */

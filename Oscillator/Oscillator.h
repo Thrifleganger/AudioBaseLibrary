@@ -51,7 +51,7 @@ public:
 };
 
 
-class Oscil : public AudioParams{
+class Oscil : public AudioBuffer{
 
 protected:
 
@@ -60,8 +60,11 @@ protected:
 	double *table;
 	int size;
 	double phase;
-	double *buffer;
+	const double *ampMod;
+	const double *freqMod;
+
 	void updatePhase();
+	void checkModulation(int index);
 
 public:
 
@@ -69,28 +72,72 @@ public:
 
 	Oscil(double a, double f, const FuncTable &t, double phs = 0.) :
 			amplitude(a), frequency(f), table(t.getTable()), size(t.getSize()),
-			phase(phs), buffer(new double[getVectorSize()]) {
+			phase(phs), ampMod(NULL), freqMod(NULL) {
 	}
 
 	virtual ~Oscil() {
-		delete[] buffer;
 	}
 
-	const double *process() {
+	//Change
+	virtual const Oscil &process() {
 		oscillator();
-		return buffer;
+		return *this;
 	}
-	const double *process(double a, double f) {
+
+	virtual const Oscil &process(double a, double f) {
 		amplitude = a;
 		frequency = f;
 		oscillator();
-		return buffer;
+		return *this;
 	}
-	const double *process(double a) {
+
+	virtual const Oscil &process(double a) {
 		amplitude = a;
 		oscillator();
-		return buffer;
+		return *this;
 	}
+
+	virtual const Oscil &process(const AudioBuffer &obja) {
+		ampMod = obja.getVector();
+		oscillator();
+		return *this;
+	}
+
+	virtual const Oscil &process(const AudioBuffer &obja, float f) {
+		ampMod = obja.getVector();
+		frequency = f;
+		oscillator();
+		return *this;
+	}
+
+	virtual const Oscil &process(const AudioBuffer &obja,const AudioBuffer &objf) {
+		ampMod = obja.getVector();
+		freqMod = objf.getVector();
+		oscillator();
+		return *this;
+	}
+
+	virtual const Oscil &process(float a,const AudioBuffer &objf) {
+		amplitude = a;
+		freqMod = objf.getVector();
+		oscillator();
+		return *this;
+	}
+
+	virtual const Oscil &operator()() { return process(); }
+
+	virtual const Oscil &operator()(double a) { return process(a); }
+
+	virtual const Oscil &operator()(double a, double f) { return process(a, f); }
+
+	virtual const Oscil &operator()(const AudioBuffer &obja) { return process(obja); }
+
+	virtual const Oscil &operator()(const AudioBuffer &obja, double f) { return process(obja, f); }
+
+	virtual const Oscil &operator()(const AudioBuffer &obja,const AudioBuffer &objf) { return process(obja, objf); }
+
+	virtual const Oscil &operator()(double a,const AudioBuffer &objf) { return process(a, objf); }
+
 
 };
 
