@@ -7,6 +7,9 @@
 
 #include "Oscillator.h"
 #include <cstdlib>
+#include "FunctionTable.h"
+
+const SinTable Oscil::sinTab;
 
 void Oscil::oscillator() {
 	for (unsigned int i = 0; i < getVectorSize(); i++) {

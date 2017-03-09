@@ -4,57 +4,20 @@
  *  Created on: Feb 7, 2017
  *      Author: Thrifleganger
  */
-//Made some change here
+
 #ifndef OSCILLATOR_H_
 #define OSCILLATOR_H_
 
 #include <cmath>
 #include <cstring>
 #include "AudioBase.h"
-
-const double _TWO_PI = 8. * atan(1.);
-
-class FuncTable : public AudioParams{
-protected:
-	double *table;
-	int size;
-public:
-	FuncTable(int s, const double *tab = NULL){
-		size = s;
-		table = new double[size + 2];
-		if(tab){
-			memcpy(table, tab, size * sizeof(double));
-			//Wrap around points for linear and cubic interpolation.
-			table[size+1] = table[1];
-			table[size] = table[0];
-		}
-	}
-	~FuncTable(){
-		delete[] table;
-	}
-
-	double *getTable() const{
-		return table;
-	}
-
-	int getSize() const{
-		return size;
-	}
-};
-
-class SinTable : public FuncTable {
-public:
-	SinTable(int s) : FuncTable(s) {
-		for(int i=0; i < size; i++)
-			table[i] = sin(i*_TWO_PI/size);
-	}
-};
-
+#include "FunctionTable.h"
 
 class Oscil : public AudioBuffer{
 
 protected:
 
+	const static SinTable sinTab;
 	double amplitude;
 	double frequency;
 	double *table;
@@ -70,7 +33,7 @@ public:
 
 	virtual void oscillator();
 
-	Oscil(double a, double f, const FuncTable &t, double phs = 0.) :
+	Oscil(double a, double f, const FuncTable &t = sinTab, double phs = 0.) :
 			amplitude(a), frequency(f), table(t.getTable()), size(t.getSize()),
 			phase(phs), ampMod(NULL), freqMod(NULL) {
 	}
