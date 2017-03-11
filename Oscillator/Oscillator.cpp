@@ -92,6 +92,12 @@ double* TableReader::readTable(const double *phaseTab){
 
 void WhiteNoise::generate() {
 	for(unsigned int i = 0; i < getVectorSize(); i++) {
-		buffer[i] = amplitude * ((rand() % 2001 / 1000.0) - 1);
+		checkModulation(i);
+		vector[i] = amplitude * ((rand() % 2001 / 1000.0) - 1);
 	}
+}
+
+void WhiteNoise::checkModulation(int index) {
+	if(ampMod != NULL)
+		amplitude = ampMod[index];
 }

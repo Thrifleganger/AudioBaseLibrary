@@ -1,13 +1,13 @@
 /**
 	Envelope.h
-	~~~~~~~~~~
+
 	Header file containing classes for generating single segment,
 	multi segment and ADSR envelopes.
 
 	Hierarchy:
 
 		CLASS				DEPENDENCIES
-	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	1)	SingleSegment		AudioParams
 	2) 	Lineseg				AudioParams, SingleSegment
 	3) 	Expseg				AudioParams, SingleSegment
@@ -15,8 +15,8 @@
 	5)	Linesegs			AudioParams, MultiSegment
 	6)	Expsegs				AudioParams, MultiSegment
 
-	@Author: Thrifleganger
-	@Version: 1.0
+	@Author Thrifleganger
+	@Version 1.0
 */
 
 #ifndef ENVELOPE_H_
@@ -30,7 +30,7 @@
 /**
  * SingleSegment: Base class for all single segment envelopes
  */
-class SingleSegment : public AudioParams{
+class SingleSegment : public AudioBuffer{
 
 protected:
 	long duration;
@@ -39,7 +39,6 @@ protected:
 	double endPos;
 	double currentPos;
 	double increment;
-	double* vector;
 	bool hold;
 	bool repeat;
 
@@ -53,29 +52,29 @@ public:
 
 	SingleSegment(double start, double dur, double end, bool hold = true, bool repeat = false);
 
-	virtual ~SingleSegment(){
-		delete[] vector;
-	}
+	virtual ~SingleSegment(){}
 
 	/**
 	 * Recursively generate envelope samples of the shape that was used while instantiating
 	 * the envelope object. To be called recursively inside a processing loop.
 	 *
-	 * @params: None
-	 * @return: A constant double pointer of size 'vectorSize', filled with interpolated
+	 * @param None
+	 * @return A constant double pointer of size 'vectorSize', filled with interpolated
 	 * envelope values
 	 */
-	virtual const double* process(){
+	virtual const AudioBuffer process(){
 		generate();
-		return vector;
+		return *this;
 	}
+
+	virtual const AudioBuffer operator()() { return process(); }
 
 	/**
 	 * Resets the envelope pointer to start from the start of the shape that was used
 	 * while instantiating the envelope object.
 	 *
-	 * @params: None
-	 * @return: None
+	 * @param None
+	 * @return None
 	 */
 	virtual void reset(){
 		retrigger();
@@ -86,13 +85,13 @@ public:
 	 * specified which overwrites the values specified while instantiating the
 	 * envelope object
 	 *
-	 * @params: start: Position or value at the start of the envelope.
+	 * @param start: Position or value at the start of the envelope.
 	 * 			duration: Duration in seconds, between start and end.
 	 * 			end: Position or value at the end of the envelope.
 	 * 			hold(Def - true): Holds the value at 'end' after 'duration', if true. If
 	 * 				false, continues interpolating based on the current shape.
 	 * 			repeat(Def - false): Repeats the envelope upon reaching 'end'.
-	 * @return: None
+	 * @return None
 	 */
 	virtual void reset(double start, double duration, double end, bool hold = true, bool repeat = false){
 		startPos = start;
@@ -120,13 +119,13 @@ public:
 	/**
 	 * 	Constructor for instantiating a 2 point linear envelope.
 	 *
-	 *	@params: start: Position or value at the start of the envelope.
-	 * 			duration: Duration in seconds, between start and end.
-	 * 			end: Position or value at the end of the envelope.
-	 * 			hold(Def - true): Holds the value at 'end' after 'duration', if true. If
+	 *	@param start Position or value at the start of the envelope.
+	 * 	@param duration Duration in seconds, between start and end.
+	 * 	@param end Position or value at the end of the envelope.
+	 * 	@param hold Holds the value at 'end' after 'duration', if true. If
 	 * 				false, continues interpolating based on the current shape.
-	 * 			repeat(Def - false): Repeats the envelope upon reaching 'end'.
-	 * 	@return: None
+	 * 	@param repeat Repeats the envelope upon reaching 'end'.
+	 * 	@return None
 	 */
 	Lineseg(double start, double dur, double end, bool hold = true, bool repeat = false);
 
@@ -148,23 +147,23 @@ public:
 	/**
 	 * 	Constructor for instantiating a 2 point exponential envelope.
 	 *
-	 *	@params: start: Position or value at the start of the envelope.
+	 *	@param start Position or value at the start of the envelope.
 	 * 			duration: Duration in seconds, between start and end.
 	 * 			end: Position or value at the end of the envelope.
 	 * 			hold(Def - true): Holds the value at 'end' after 'duration', if true. If
 	 * 				false, continues interpolating based on the current shape.
 	 * 			repeat(Def - false): Repeats the envelope upon reaching 'end'.
-	 * 	@return: None
+	 * 	@return None
 	 */
 	Expseg(double start, double dur, double end, bool hold = true, bool repeat = false);
 
 };
 
-// ***********ERRORS IN CONSTRUCTOR PARAMETERS
+
 /**
  * SingleSegment: Base class for all multi segment envelopes
  */
-class MultiSegment : public AudioParams{
+class MultiSegment : public AudioBuffer{
 
 protected:
 	long count;
@@ -172,7 +171,6 @@ protected:
 	std::vector<double> time;
 	double currentPos;
 	double increment;
-	double* vector;
 	int currentDuration;
 	double currentStart;
 	double currentEnd;
@@ -192,28 +190,29 @@ public:
 	MultiSegment(std::vector<double> position, std::vector<double> timeVect, bool hold = true, bool repeat = false);
 
 	virtual ~MultiSegment(){
-		delete[] vector;
 	}
 
 	/**
 	 * Recursively generate envelope samples of the shape that was used while instantiating
 	 * the envelope object. To be called recursively inside a processing loop.
 	 *
-	 * @params: None
-	 * @return: A constant double pointer of size 'vectorSize', filled with interpolated
+	 * @param None
+	 * @return A constant double pointer of size 'vectorSize', filled with interpolated
 	 * envelope values
 	 */
-	virtual const double* process(){
+	virtual const AudioBuffer process(){
 		generate();
-		return vector;
+		return *this;
 	}
+
+	virtual const AudioBuffer operator()() { return process(); }
 
 	/**
 	 * Resets the envelope pointer to the default values provided in the vectors used
 	 * while instantiating the envelope object.
 	 *
-	 * @params: None
-	 * @return: None
+	 * @param None
+	 * @return None
 	 */
 	virtual void reset(){
 		retrigger();
@@ -224,12 +223,12 @@ public:
 	 * specified which overwrites the values specified while instantiating the
 	 * envelope object
 	 *
-	 * @params: position: Position or value vector of envelope points
+	 * @param position Position or value vector of envelope points
 	 * 			time: A vector of duration in seconds, between position points.
 	 * 			hold(Def - true): Holds the value at 'end' after 'duration', if true. If
 	 * 				false, continues interpolating based on the current shape.
 	 * 			repeat(Def - false): Repeats the envelope upon reaching 'end'.
-	 * @return: None
+	 * @return None
 	 */
 	virtual void reset(std::vector<double> position, std::vector<double> timeVect, bool hold = true, bool repeat = false){
 		this->position = position;
@@ -258,12 +257,12 @@ public:
 	/**
 	 * 	Constructor for instantiating a multi point linear envelope.
 	 *
-	 *	@params: position: Position or value vector of envelope points
+	 *	@param position: Position or value vector of envelope points
 	 * 			time: A vector of duration in seconds, between position points.
 	 * 			hold(Def - true): Holds the value of the last position, if true. If
 	 * 				false, continues interpolating based on the current shape.
 	 * 			repeat(Def - false): Repeats the envelope upon reaching last position.
-	 * 	@return: None
+	 * 	@return None
 	 */
 	Linesegs(std::vector<double> position, std::vector<double> timeVect, bool hold = true, bool repeat = false);
 };
@@ -284,12 +283,12 @@ public:
 	/**
 	 * 	Constructor for instantiating a multi point exponential envelope.
 	 *
-	 *	@params: position: Position or value vector of envelope points
+	 *	@param position: Position or value vector of envelope points
 	 * 			time: A vector of duration in seconds, between position points.
 	 * 			hold(Def - true): Holds the value of the last position, if true. If
 	 * 				false, continues interpolating based on the current shape.
 	 * 			repeat(Def - false): Repeats the envelope upon reaching last position.
-	 * 	@return: None
+	 * 	@return None
 	 */
 	Expsegs(std::vector<double> position, std::vector<double> timeVect, bool hold = true, bool repeat = false);
 };

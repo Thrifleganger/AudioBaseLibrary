@@ -130,6 +130,7 @@ public:
 	void oscillator();
 };
 
+//****************************************MODIFY
 class TableReader : public AudioParams {
 
 protected:
@@ -148,25 +149,42 @@ public:
 
 };
 
-class WhiteNoise : public AudioParams {
+class WhiteNoise : public AudioBuffer {
 
 protected:
 	double amplitude;
-	double *buffer;
+	const double *ampMod;
+
 	virtual void generate();
+	virtual void checkModulation(int index);
 
 public:
-	WhiteNoise(double amplitude) : amplitude(amplitude),
-		buffer(new double[getVectorSize()]) {}
+	WhiteNoise(const double amplitude = 0.5) : amplitude(amplitude), ampMod(NULL) {}
 
-	virtual ~WhiteNoise() {
-		delete[] buffer;
-	}
+	virtual ~WhiteNoise() {}
 
-	const double *process() {
+	const AudioBuffer &process() {
 		generate();
-		return buffer;
+		return *this;
 	}
+
+	const AudioBuffer &process(const double amp) {
+		amplitude = amp;
+		generate();
+		return *this;
+	}
+
+	const AudioBuffer &process(const AudioBuffer &buffer) {
+		ampMod = buffer.getVector();
+		generate();
+		return *this;
+	}
+
+	const AudioBuffer &operator()() { return process(); }
+
+	const AudioBuffer &operator()(const double a) { return process(a); }
+
+	const AudioBuffer &operator()(const AudioBuffer &b) { return process(b); }
 };
 
 

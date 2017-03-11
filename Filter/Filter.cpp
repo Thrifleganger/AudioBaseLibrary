@@ -7,15 +7,31 @@
 #include "Filter.h"
 #include <cmath>
 
-double *FirstOrderFilter::process(const double *sig, double cutOffFrequency) {
-	signal = sig;
+const AudioBuffer &FirstOrderFilter::process(const AudioBuffer &sig, double cutOffFrequency) {
+	signal = sig.getVector();
 	if(cutOff != cutOffFrequency) {
 		cutOff = cutOffFrequency;
 		update();
 	}
 	else
 		filter();
-	return buffer;
+	return *this;
+}
+
+const AudioBuffer &FirstOrderFilter::process(const AudioBuffer &sig, const AudioBuffer &cutOffFrequency) {
+	signal = sig.getVector();
+	cutOffMod = cutOffFrequency.getVector();
+	cutOff = cutOffMod[0];
+	update();
+	filter();
+	return *this;
+}
+
+void FirstOrderFilter::checkModulation(int index) {
+	if(cutOffMod != NULL) {
+		cutOff = cutOffMod[index];
+		update();
+	}
 }
 
 // ************* Divide by zero error check
@@ -29,8 +45,9 @@ void ToneLP::update() {
 
 void ToneLP::filter() {
 	for(unsigned int i = 0; i < getVectorSize(); i++) {
+		checkModulation(i);
 		delSig = coeffA * signal[i] - coeffB * delSig;
-		buffer[i] = delSig;
+		vector[i] = delSig;
 	}
 }
 
@@ -47,33 +64,53 @@ void ToneHP::update() {
 
 void ToneHP::filter() {
 	for(unsigned int i = 0; i < getVectorSize(); i++) {
+		checkModulation(i);
 		delSig = coeffA * signal[i] - coeffB * delSig;
-		buffer[i] = delSig;
+		vector[i] = delSig;
 	}
 }
 
 
+//Second order filter:
 
-double *Butterworth::process(const double *sig, double cutOffFrequency, double BW) {
-	signal = sig;
-	if(cutOff != cutOffFrequency || bandwidth != BW) {
-		cutOff = cutOffFrequency;
-		bandwidth = BW;
-		update();
-	}
-	else
-		filter();
-	return buffer;
-}
-
-void Butterworth::filter() {
-	for(unsigned int i = 0; i < getSrate(); i++) {
+void SecondOrderFilter::filter() {
+	for(unsigned int i = 0; i < getVectorSize(); i++) {
+		checkModulation(i);
 		w = signal[i] -  (coeffB[0] * delSig[0]) - (coeffB[1] * delSig[1]);
 		y = (coeffA[0] * w) + (coeffA[1] * delSig[0]) + (coeffA[2] * delSig[1]);
 
 		delSig[1] = delSig[0];
-		buffer[i] = delSig[0] = w;
+		vector[i] = delSig[0] = w;
 	}
+}
+
+void SecondOrderFilter::checkModulation(int index) {
+	if(cutOffMod != NULL || bwMod != NULL) {
+		cutOff = cutOffMod != NULL ? cutOffMod[index] : cutOff;
+		bandwidth = bwMod != NULL ? bwMod[index] : bandwidth;
+		update();
+	}
+}
+
+
+const AudioBuffer &Butterworth::process(const AudioBuffer &sig, double cutOffFrequency) {
+	signal = sig.getVector();
+	if(cutOff != cutOffFrequency) {
+		cutOff = cutOffFrequency;
+		update();
+	}
+	else
+		filter();
+	return *this;
+}
+
+const AudioBuffer &Butterworth::process(const AudioBuffer &sig, const AudioBuffer &cutOffFrequency) {
+	signal = sig.getVector();
+	cutOffMod = cutOffFrequency.getVector();
+	cutOff = cutOffMod[0];
+	update();
+	filter();
+	return *this;
 }
 
 void ButterLP::update() {
@@ -98,8 +135,54 @@ void ButterHP::update() {
 	coeffB[1] = (1 - sqrt(2) * L + L*L) * coeffA[0];
 }
 
-void ButterBP::update() {
 
+
+//////////////////////
+
+const AudioBuffer &ButterworthBand::process(const AudioBuffer &sig, double co, double bw) {
+	signal = sig.getVector();
+	if(cutOff != co || bandwidth != bw) {
+		cutOff = co;
+		bandwidth = bw;
+		update();
+	}
+	else
+		filter();
+	return *this;
+}
+
+const AudioBuffer &ButterworthBand::process(const AudioBuffer &sig, const AudioBuffer &co, double bw) {
+	signal = sig.getVector();
+	cutOffMod = co.getVector();
+	cutOff = cutOffMod[0];
+	bandwidth = bw;
+	update();
+	filter();
+	return *this;
+}
+
+const AudioBuffer &ButterworthBand::process(const AudioBuffer &sig, double co, const AudioBuffer &bw) {
+	signal = sig.getVector();
+	cutOff = co;
+	bwMod = bw.getVector();
+	bandwidth = bwMod[0];
+	update();
+	filter();
+	return *this;
+}
+
+const AudioBuffer &ButterworthBand::process(const AudioBuffer &sig, const AudioBuffer &co, const AudioBuffer &bw) {
+	signal = sig.getVector();
+	cutOffMod = co.getVector();
+	bwMod = bw.getVector();
+	cutOff = cutOffMod[0];
+	bandwidth = bwMod[0];
+	update();
+	filter();
+	return *this;
+}
+
+void ButterBP::update() {
 	M = pow(tan(PI * bandwidth / getSrate()), -1);
 
 	coeffA[0] = pow(1 + M, -1);

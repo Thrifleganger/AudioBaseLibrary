@@ -14,7 +14,6 @@ SingleSegment::SingleSegment(double start, double dur, double end, bool hold /*=
 	count = 0;
 	currentPos = startPos;
 	increment = 0;
-	vector = new double[getVectorSize()];
 	this->hold = hold;
 	this->repeat = repeat;
 }
@@ -98,7 +97,6 @@ MultiSegment::MultiSegment(std::vector<double> position, std::vector<double> tim
 	count = 0;
 	currentPos = position[0];
 	increment = 0;
-	vector = new double[getVectorSize()];
 	currentStart = position[0];
 	currentEnd = position[1];
 	currentDuration = time[0];
@@ -153,8 +151,8 @@ void Linesegs::recompute() {
 	increment = (currentEnd - currentStart) / time[vectorCount];
 }
 
-Linesegs::Linesegs(std::vector<double> position, std::vector<double> timeVect, bool hold, bool repeat) :
-	MultiSegment(position,timeVect,hold,repeat) {
+Linesegs::Linesegs(std::vector<double> posVect, std::vector<double> timeVect, bool hold, bool repeat) :
+	MultiSegment(posVect,timeVect,hold,repeat) {
 	increment = (currentEnd - currentStart) / currentDuration;
 }
 
@@ -192,18 +190,18 @@ void Expsegs::retrigger() {
 	currentEnd = position[1];
 	currentDuration = time[0];
 	currentPos = position[0];
-	increment = pow((currentEnd / currentStart), 1/(double)currentDuration);
+	increment = pow((currentEnd / currentStart), 1/time[vectorCount]);
 }
 
 void Expsegs::recompute() {
 	currentStart = position[++vectorCount];
 	currentEnd = position[vectorCount + 1];
 	currentDuration += time[vectorCount];
-	increment = pow((currentEnd / currentStart), 1/(double)currentDuration);
+	increment = pow((currentEnd / currentStart), 1/time[vectorCount]);
 }
 
-Expsegs::Expsegs(std::vector<double> position, std::vector<double> timeVect, bool hold, bool repeat) :
-	MultiSegment(position,timeVect,hold,repeat) {
+Expsegs::Expsegs(std::vector<double> posVect, std::vector<double> timeVect, bool hold, bool repeat) :
+	MultiSegment(posVect,timeVect,hold,repeat) {
 	for(unsigned int i = 0; i < position.size(); i++) {
 		if(position[i] == 0)
 			position[i] = 0.001;
