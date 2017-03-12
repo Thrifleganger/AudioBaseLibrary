@@ -7,8 +7,10 @@
 
 #include "AudioBase.h"
 #include <sndfile.h>
+#include <portaudio.h>
 #include <ctime>
 #include <cstdlib>
+#include <ctime>
 
 unsigned int AudioParams::srate;
 unsigned int AudioParams::nchannels;
@@ -19,6 +21,7 @@ AudioBase::AudioBase(const char* dest, unsigned int nchnls,
 		unsigned int srate,	unsigned int vsize,	unsigned int bsize)  {
 
 	srand(time(NULL));
+	startTime = clock();
 
 	destination = dest;
 	AudioParams::nchannels = nchnls;
@@ -33,7 +36,34 @@ AudioBase::AudioBase(const char* dest, unsigned int nchnls,
 
 	if (strcmp(destination, "dac") == 0) {
 
-		//Fill later
+		PaError err;
+		err = Pa_Initialize();
+		if (err == paNoError) {
+		  PaStreamParameters outparam{0};
+		  PaStream *stream;
+		  outparam.device = (PaDeviceIndex)Pa_GetDefaultOutputDevice();
+		  outparam.channelCount = nchnls;
+		  outparam.sampleFormat = paFloat32;
+		  outparam.suggestedLatency = (PaTime)(vectorSize / srate);
+		  err = Pa_OpenStream(&stream, NULL, &outparam, srate, vectorSize, paNoFlag,
+							  NULL, NULL);
+		  if (err == paNoError) {
+			err = Pa_StartStream(stream);
+			if (err == paNoError) {
+			  handle = (void *)stream;
+			  mode = AUDIO_REALTIME;
+			} else {
+			  //m_error = AULIB_RTSTREAM_ERROR;
+			  vectorSize = 0;
+			}
+		  } else {
+			//m_error = AULIB_RTOPEN_ERROR;
+			vectorSize = 0;
+		  }
+		} else {
+		  //m_error = AULIB_RTINIT_ERROR;
+		  vectorSize = 0;
+		}
 	} else if (strcmp(destination, "stdout") == 0) {
 		mode = AUDIO_STDOUT;
 		textFile = fopen("dump.txt", "w");
@@ -55,7 +85,19 @@ int AudioBase::write(const double *signal){
 	unsigned int vsamples = AudioParams::vectorSize * AudioParams::nchannels;
 
 	if (mode == AUDIO_REALTIME && handle != NULL) {
-		//Fill later
+		PaError err;
+		int bsamples = bufferSize * nchannels;
+		float *buffer = new float(bufferSize * nchannels);
+		for (unsigned int i = 0; i < vectorSize; i++) {
+		  buffer[count++] = signal[i];
+		  if (count == bsamples) {
+			err = Pa_WriteStream((PaStream *)handle, buffer, bufferSize);
+			if (err == paNoError) {
+			  frameCount += count / nchannels;
+			}
+			count = 0;
+		  }
+		}
 	} else if (mode == AUDIO_STDOUT) {
 		for(unsigned int i = 0; i < vsamples; i++){
 			fprintf(textFile, "%f\n", signal[i]);
@@ -91,6 +133,7 @@ AudioBase::~AudioBase(){
 	  sf_close((SNDFILE *) handle);
 	  delete[] buffer;
   }
+  std::cout << "Execution time (sec): " << (double)(clock() - startTime)/CLOCKS_PER_SEC << std::endl;
 }
 
 void AudioBase::printCurrentState() {
