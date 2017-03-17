@@ -7,7 +7,7 @@
 
 #include "AudioBase.h"
 #include <sndfile.h>
-#include <portaudio.h>
+//#include <portaudio.h>
 #include <ctime>
 #include <cstdlib>
 #include <ctime>
@@ -36,7 +36,7 @@ AudioBase::AudioBase(const char* dest, unsigned int nchnls,
 
 	if (strcmp(destination, "dac") == 0) {
 
-		PaError err;
+/*		PaError err;
 		err = Pa_Initialize();
 		if (err == paNoError) {
 		  PaStreamParameters outparam{0};
@@ -64,6 +64,7 @@ AudioBase::AudioBase(const char* dest, unsigned int nchnls,
 		  //m_error = AULIB_RTINIT_ERROR;
 		  vectorSize = 0;
 		}
+*/
 	} else if (strcmp(destination, "stdout") == 0) {
 		mode = AUDIO_STDOUT;
 		textFile = fopen("dump.txt", "w");
@@ -85,7 +86,7 @@ int AudioBase::write(const double *signal){
 	unsigned int vsamples = AudioParams::vectorSize * AudioParams::nchannels;
 
 	if (mode == AUDIO_REALTIME && handle != NULL) {
-		PaError err;
+/*		PaError err;
 		int bsamples = bufferSize * nchannels;
 		float *buffer = new float(bufferSize * nchannels);
 		for (unsigned int i = 0; i < vectorSize; i++) {
@@ -98,6 +99,7 @@ int AudioBase::write(const double *signal){
 			count = 0;
 		  }
 		}
+*/
 	} else if (mode == AUDIO_STDOUT) {
 		for(unsigned int i = 0; i < vsamples; i++){
 			fprintf(textFile, "%f\n", signal[i]);
