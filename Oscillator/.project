@@ -5,6 +5,7 @@
 	<projects>
 		<project>AudioBase</project>
 		<project>FunctionTable</project>
+		<project>Exception</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

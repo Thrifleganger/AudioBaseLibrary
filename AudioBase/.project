@@ -3,6 +3,7 @@
 	<name>AudioBase</name>
 	<comment></comment>
 	<projects>
+		<project>Exception</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

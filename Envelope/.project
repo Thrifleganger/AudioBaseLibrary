@@ -4,6 +4,7 @@
 	<comment></comment>
 	<projects>
 		<project>AudioBase</project>
+		<project>Exception</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

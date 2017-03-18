@@ -21,7 +21,7 @@ class SReverb : public Delay {
 	Allpass apass2;
 
 public:
-	SReverb(double decay = 3) : Delay(1.0),
+	SReverb(double decay = 3) : Delay::Delay(1.0),
 		decayTime(decay),
 		delay1(0.0297),
 		delay2(0.0371),
@@ -43,8 +43,8 @@ public:
 		delay4(signal);
 		parallel = delay1 + delay2 + delay3 + delay4;
 		apass1(parallel);
-		apass2(apass1);
-		return apass2;
+		fillVector(apass2(apass1));
+		return *this;
 	}
 
 	const AudioBuffer &operator()(const AudioBuffer &signal) { return process(signal); }

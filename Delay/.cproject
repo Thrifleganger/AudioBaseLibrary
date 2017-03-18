@@ -25,7 +25,8 @@
 							<targetPlatform id="cdt.managedbuild.target.gnu.platform.cygwin.lib.debug.419339053" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.cygwin.lib.debug"/>
 							<builder buildPath="${workspace_loc:/Delay}/Debug" id="cdt.managedbuild.target.gnu.builder.cygwin.lib.debug.413146050" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.cygwin.lib.debug"/>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.cygwin.lib.debug.1767695316" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.cygwin.lib.debug">
-								<option id="gnu.both.asm.option.include.paths.1670933924" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+								<option id="gnu.both.asm.option.include.paths.1670933924" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Exception}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioBase}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1660149182" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
@@ -34,7 +35,8 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.lib.debug.445668160" name="Cygwin C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.lib.debug">
 								<option id="gnu.cpp.compiler.cygwin.lib.debug.option.optimization.level.1043730845" name="Optimization Level" superClass="gnu.cpp.compiler.cygwin.lib.debug.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.cygwin.lib.debug.option.debugging.level.1108240163" name="Debug Level" superClass="gnu.cpp.compiler.cygwin.lib.debug.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
-								<option id="gnu.cpp.compiler.option.include.paths.416827628" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+								<option id="gnu.cpp.compiler.option.include.paths.416827628" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Exception}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioBase}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin.1056437763" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin"/>
@@ -42,7 +44,8 @@
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.lib.debug.207310816" name="Cygwin C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin.lib.debug">
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.cygwin.lib.debug.option.optimization.level.1107465454" name="Optimization Level" superClass="gnu.c.compiler.cygwin.lib.debug.option.optimization.level" useByScannerDiscovery="false" valueType="enumerated"/>
 								<option id="gnu.c.compiler.cygwin.lib.debug.option.debugging.level.2089330830" name="Debug Level" superClass="gnu.c.compiler.cygwin.lib.debug.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
-								<option id="gnu.c.compiler.option.include.paths.1043447965" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+								<option id="gnu.c.compiler.option.include.paths.1043447965" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Exception}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioBase}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.cygwin.2051073805" superClass="cdt.managedbuild.tool.gnu.c.compiler.input.cygwin"/>
@@ -59,6 +62,13 @@
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/AudioBase"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/AudioBase/Debug"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="AudioBase" srcPrefixMapping="" srcRootPath=""/>
+					</externalSetting>
+				</externalSettings>
+				<externalSettings containerId="Exception;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
+					<externalSetting>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/Exception"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/Exception/Debug"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="Exception" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 			</storageModule>
@@ -128,4 +138,5 @@
 		</scannerConfigBuildInfo>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="refreshScope"/>
 </cproject>

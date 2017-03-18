@@ -25,7 +25,8 @@
 							<targetPlatform id="cdt.managedbuild.target.gnu.platform.cygwin.lib.debug.1382631511" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.cygwin.lib.debug"/>
 							<builder buildPath="${workspace_loc:/Filter}/Debug" id="cdt.managedbuild.target.gnu.builder.cygwin.lib.debug.989527222" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.cygwin.lib.debug"/>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.cygwin.lib.debug.113516604" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.cygwin.lib.debug">
-								<option id="gnu.both.asm.option.include.paths.272677688" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+								<option id="gnu.both.asm.option.include.paths.272677688" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Exception}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Envelope}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioBase}&quot;"/>
 								</option>
@@ -35,7 +36,8 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.lib.debug.1934116834" name="Cygwin C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.lib.debug">
 								<option id="gnu.cpp.compiler.cygwin.lib.debug.option.optimization.level.981099792" name="Optimization Level" superClass="gnu.cpp.compiler.cygwin.lib.debug.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.cygwin.lib.debug.option.debugging.level.458418631" name="Debug Level" superClass="gnu.cpp.compiler.cygwin.lib.debug.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
-								<option id="gnu.cpp.compiler.option.include.paths.427513934" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+								<option id="gnu.cpp.compiler.option.include.paths.427513934" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Exception}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Envelope}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioBase}&quot;"/>
 								</option>
@@ -44,7 +46,8 @@
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.lib.debug.1603246681" name="Cygwin C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin.lib.debug">
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.cygwin.lib.debug.option.optimization.level.1053626578" name="Optimization Level" superClass="gnu.c.compiler.cygwin.lib.debug.option.optimization.level" useByScannerDiscovery="false" valueType="enumerated"/>
 								<option id="gnu.c.compiler.cygwin.lib.debug.option.debugging.level.1767935644" name="Debug Level" superClass="gnu.c.compiler.cygwin.lib.debug.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
-								<option id="gnu.c.compiler.option.include.paths.526776952" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+								<option id="gnu.c.compiler.option.include.paths.526776952" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Exception}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Envelope}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioBase}&quot;"/>
 								</option>
@@ -69,6 +72,13 @@
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/Envelope"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/Envelope/Debug"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="Envelope" srcPrefixMapping="" srcRootPath=""/>
+					</externalSetting>
+				</externalSettings>
+				<externalSettings containerId="Exception;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
+					<externalSetting>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/Exception"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/Exception/Debug"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="Exception" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 			</storageModule>
@@ -138,4 +148,5 @@
 		</scannerConfigBuildInfo>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="refreshScope"/>
 </cproject>
