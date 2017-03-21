@@ -9,6 +9,8 @@
 #define FUNCTIONTABLE_H_
 
 #include "AudioBase.h"
+#include <vector>
+#include "AudioException.h"
 
 enum wave_type {
 	SINE = 1,
@@ -57,5 +59,38 @@ public:
 
 };
 
+class SampleTable : public AudioException{
+protected:
+	std::vector<double> sampTab;
+	int channels;
+	double samplerate;
+	long frames;
+	AudioException exception;
+
+public:
+	SampleTable() : channels(0), samplerate(0), frames(0) {}
+	SampleTable(const char* fileName);
+
+	int getChannels() { return channels; }
+	double getSampleRate() { return samplerate; }
+	long getFrames() { return frames; }
+	std::vector<double> getSampleTable() { return sampTab; }
+
+	const double operator[](int index) { return sampTab[index];	}
+};
+
+class SampleReader : public AudioBuffer {
+protected:
+	double frameCount;
+	double skipTime;
+	bool wrapAround;
+	SampleTable sampleTable;
+public:
+
+	SampleReader(const SampleTable &sampTable, double skipTime = 0.0, bool wrapAround = false);
+
+	const AudioBuffer &process(double playbackSpeed = 1.0);
+
+};
 
 #endif /* FUNCTIONTABLE_H_ */

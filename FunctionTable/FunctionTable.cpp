@@ -6,8 +6,12 @@
  */
 
 #include "FunctionTable.h"
+#include <sndfile.h>
 #include <vector>
 #include <cmath>
+#include "AudioException.h"
+#include <cstdlib>
+#include <exception>
 
 FuncTable::FuncTable(unsigned int s, const double *tab, bool norm) {
 	size = s;
@@ -82,4 +86,76 @@ void FourierTable::createTable(const unsigned int harmonics, const double *ampAr
 			table[i] += amp * sin(((partial + 1) * i * TWOPI / size) + phase);
 		}
 	}
+}
+
+SampleTable::SampleTable(const char* fileName) {
+	int bufferSize = 1024;
+	long framesRead = 0;
+	double *readBuffer = new double[bufferSize];
+
+	SF_INFO info;
+	SNDFILE *openFile = sf_open(fileName ,SFM_READ, &info);
+	frames=0; channels =0; samplerate=0;
+	if(openFile != NULL) {
+		channels = info.channels;
+		samplerate = info.samplerate;
+		frames = (long) info.frames;
+ 		sampTab.resize(frames * channels + 1, 0.0);
+
+		int count = 0;
+		framesRead = sf_readf_double(openFile, readBuffer, bufferSize / channels);
+		while(framesRead != 0) {
+			for(int i = 0; i < framesRead; i++)
+				sampTab[count++] = readBuffer[i];
+			framesRead = sf_readf_double(openFile, readBuffer, bufferSize / channels);
+		}
+	} else {
+		exception.setError(OPEN_FILE_TO_READ, fileName, DEBUG_INFO);
+		exception.printErrorToConsole();
+		exit(exception.getErrorNumber());
+	}
+	if(openFile)
+		sf_close(openFile);
+}
+
+SampleReader::SampleReader(const SampleTable &sampTable, double skipTime, bool wrapAround) {
+	this->wrapAround = wrapAround;
+	sampleTable = sampTable;
+	this->skipTime = (int)skipTime * sampleTable.getSampleRate();
+	if(skipTime >= sampleTable.getFrames() || skipTime < 0) {
+		exception.setError(SEEK_BEYOND_FILE, "", DEBUG_INFO);
+		exception.printErrorToConsole();
+		exit(exception.getErrorNumber());
+	}
+	frameCount = this->skipTime;
+};
+
+const AudioBuffer& SampleReader::process(double speed) {
+	int posi;
+	double frac;
+	for(unsigned int i = 0; i < getVectorSize(); i++) {
+		posi = (int) frameCount;
+		frac = frameCount - posi;
+		if(speed >= 0) {
+			if(frameCount < sampleTable.getFrames()) {
+				vector[i] = sampleTable[posi] + frac * (sampleTable[posi + 1] - sampleTable[posi]);
+				frameCount += speed;
+			}
+			else if(wrapAround)
+				frameCount = 0;
+			else
+				vector[i] = 0;
+		} else {
+			if(frameCount > 0) {
+				vector[i] = sampleTable[posi] + frac * (sampleTable[posi + 1] - sampleTable[posi]);
+				frameCount += speed;
+			}
+			else if(wrapAround)
+				frameCount = sampleTable.getFrames();
+			else
+				vector[i] = 0;
+		}
+	}
+
+	return *this;
 }

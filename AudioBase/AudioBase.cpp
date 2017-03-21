@@ -8,7 +8,7 @@
 #include "AudioBase.h"
 #include "AudioException.h"
 #include <sndfile.h>
-//#include <portaudio.h>
+#include <portaudio.h>
 #include <ctime>
 #include <cstdlib>
 #include <ctime>
@@ -50,7 +50,7 @@ AudioBase::AudioBase(const char* dest, unsigned int nchnls,
 
 	if (strcmp(destination, "dac") == 0) {
 
-/*		PaError err;
+		PaError err;
 		err = Pa_Initialize();
 		if (err == paNoError) {
 		  PaStreamParameters outparam{0};
@@ -78,7 +78,7 @@ AudioBase::AudioBase(const char* dest, unsigned int nchnls,
 		  //m_error = AULIB_RTINIT_ERROR;
 		  vectorSize = 0;
 		}
-*/
+
 	} else if (strcmp(destination, "stdout") == 0) {
 		mode = AUDIO_STDOUT;
 		textFile = fopen("dump.txt", "w");
@@ -108,7 +108,8 @@ AudioBase::AudioBase(const char* dest, unsigned int nchnls,
 int AudioBase::write(const double *signal){
 
 	if (mode == AUDIO_REALTIME && handle != NULL) {
-/*		PaError err;
+
+		PaError err;
 		int bsamples = bufferSize * nchannels;
 		float *buffer = new float(bufferSize * nchannels);
 		for (unsigned int i = 0; i < vectorSize; i++) {
@@ -121,7 +122,8 @@ int AudioBase::write(const double *signal){
 			count = 0;
 		  }
 		}
-*/
+
+
 	} else if (mode == AUDIO_STDOUT) {
 		for(unsigned int i = 0; i < AudioParams::vectorSize; i++){
 			fprintf(textFile, "%f\n", signal[i]);
@@ -151,7 +153,7 @@ int AudioBase::writeStereo(const double *left, const double *right){
 		exit(exception.getErrorNumber());
 	}
 	if (mode == AUDIO_REALTIME && handle != NULL) {
-/*		PaError err;
+		/*PaError err;
 		int bsamples = bufferSize * nchannels;
 		float *buffer = new float(bufferSize * nchannels);
 		for (unsigned int i = 0; i < vectorSize; i++) {
@@ -163,8 +165,8 @@ int AudioBase::writeStereo(const double *left, const double *right){
 			}
 			count = 0;
 		  }
-		}
-*/
+		}*/
+
 	} else if (mode == AUDIO_STDOUT) {
 		for(unsigned int i = 0; i < AudioParams::vectorSize; i++){
 			fprintf(textFile, "%f\t%f\n", left[i], right[i]);

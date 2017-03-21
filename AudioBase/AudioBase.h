@@ -1,4 +1,4 @@
-/*Author - Thrifleganger
+/**Author - Thrifleganger
  *
  *AudioBase: base class for all audio applications. Must call AudioBase constructor before audio processing begins.
  */
@@ -13,40 +13,40 @@
 #include <ctime>
 #include "AudioException.h"
 
-/*
+/**
  *	Default vector size for signals (block size/ksmps/control buffer)
  */
 const unsigned int def_vsize = 64;
-/*
+/**
  * Default sampling rate.
  */
 const unsigned int def_samplerate = 44100;
-/*
+/**
  * Default control rate. Sample rate / vector size
  */
 const unsigned int def_controlrate = def_samplerate / def_vsize;
-/*
+/**
  * Default number of audio channels
  */
 const unsigned int def_nchannels = 1;
-/*
+/**
  * Default table size. Should bbe a power of two.
  */
 const unsigned int def_tsize = 4096;
-/*
+/**
  * Default IO buffer size
  */
 const unsigned int def_bsize = 1024;
-/*
+/**
  * Value of Pi
  */
 const double PI = 4*atan(1.);
-/*
+/**
  * Value of 2 * Pi
  */
 const double TWOPI = 8*atan(1.);
 
-/*
+/**
  * Enumeration for setting destination.
  * AUDIO_REALTIME - Writes audio to default output device in real time using portaudio.
  * AUDIO_STDOUT - Writes audio or control sample data to file.
@@ -58,7 +58,7 @@ enum {
 	AUDIO_SNDFILE
 };
 
-/*
+/**
  * Class for storing basic audio data members. Values are set using AudioBase class constructor.
  * Values set once persist throughout the application since the data members are static.
  */
@@ -70,28 +70,28 @@ protected:
 	static unsigned int bufferSize;
 
 public:
-	/*
+	/**
 	 * Get IO buffer size.
 	 */
 	static unsigned int getBufferSize() {
 		return bufferSize;
 	}
 
-	/*
+	/**
 	 * Get number of audio channels.
 	 */
 	static unsigned int getNchannels() {
 		return nchannels;
 	}
 
-	/*
+	/**
 	 * Get sampling rate.
 	 */
 	static unsigned int getSrate() {
 		return srate;
 	}
 
-	/*
+	/**
 	 * Get signal vector size.
 	 */
 	static unsigned int getVectorSize() {
@@ -99,7 +99,7 @@ public:
 	}
 };
 
-/*
+/**
  * Class for handling buffered storage of signal or control values. A vector object of `vector size` length
  * is initialized, and is the basic means of communicating between different DSP classes.
  */
@@ -114,13 +114,13 @@ public:
 		vector.clear();
 	}
 
-	/*
+	/**
 	 * Returns vector as an array of double values.
 	 * @return Array of length `vector size`
 	 */
 	const double *getVector() const { return &vector[0]; }
 
-	/*
+	/**
 	 * Fill the called AudioBuffer object's vector with another AudioBuffer object's vector
 	 * @param signal AudioBuffer object containing the source vector.
 	 */
@@ -317,7 +317,7 @@ public:
 			for(unsigned int i = 0; i < AudioParams::vectorSize; i++)
 				temp.vector[i] = vector[i] / scalar;
 		} else {}
-			//****************************************Handle error
+			//*****************************************Handle error
 		return temp;
 	}
 
@@ -379,7 +379,7 @@ public:
 
 };
 
-/*
+/**
  * Class for instantiating and initializing the library. An AudioBase object needs to be declared and
  * initialized before any other DSP operation from the library is performed. The initialization ensures that
  * correct values of variables such as channels, sample rate, signal vector size are set and usable by
@@ -403,7 +403,7 @@ protected:
 
 public:
 
-	/*
+	/**
 	 * Constructor for the AudioBase class. This constructs the base object required to perform other
 	 * DSP operations. This constructor must be called before any other class is instantiated.
 	 * @param destination The target destination. Can be any of the follow:
@@ -423,7 +423,7 @@ public:
 
 	~AudioBase();
 
-	/*
+	/**
 	 * Writes an array to the `destination`. Can be single or multichannel. If single channel, the
 	 * array is written as mono. If `nchannels` is 2, a stereo output is generated, duplicating
 	 * the same array in both channels
@@ -432,7 +432,7 @@ public:
 	 */
 	int write(const double* signal);
 
-	/*
+	/**
 	 * Writes an AudioBuffer object to the `destination`. Can be single or multichannel. If single channel, the
 	 * object is written as mono. If `nchannels` is 2, a stereo output is generated, duplicating
 	 * the same array in both channels
@@ -441,7 +441,7 @@ public:
 	 */
 	int write(const AudioBuffer& buffer) { return write(buffer.getVector()); }
 
-	/*
+	/**
 	 * Writes a couple of arrays as stereo to the `destination`. Targeted for `nchannels` = 2. Generates error
 	 * for any other channel number.
 	 * @param left Left channel array pointer. The array size should be atleaset `vector size` in length.
@@ -450,7 +450,7 @@ public:
 	 */
 	int writeStereo(const double* left, const double* right);
 
-	/*
+	/**
 	 * Writes a couple of `AudioBuffer` objects as stereo to the `destination`. Targeted for `nchannels` = 2.
 	 * Generates error for any other channel number.
 	 * @param left Left channel `AudioBuffer` object.
@@ -461,7 +461,7 @@ public:
 		return writeStereo(left.getVector(), right.getVector());
 	}
 
-	/*
+	/**
 	 * Print essential info and state information to the console. For debugging purpose.
 	 */
 	void printCurrentState();
